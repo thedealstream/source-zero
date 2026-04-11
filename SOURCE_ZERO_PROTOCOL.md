@@ -1,15 +1,23 @@
-# Source Zero Protocol
+# Source Zero
 
-Every factual claim in research output must be traceable to a verified URL.
-No exceptions. No "common knowledge." No training-data citations. No dead links.
+Source Zero is a neuro-symbolic architecture for making LLM-generated research
+trustworthy. The goal is **neuro-symbolic parity** -- the state where the
+symbolic layer finds nothing to correct because the neural layer's unsupervised
+surface area has been reduced to near zero.
 
-This protocol applies to ALL research produced in this project -- reports,
-analyses, memos, summaries, comparisons, or any document containing factual
-claims derived from web research.
+Source Zero is not a verification step bolted onto the end. It is the
+foundational architecture: the neural layer (LLM) produces research within
+symbolic constraints, and the symbolic layer (scripts) enforces those
+constraints deterministically. The layers co-evolve -- every new category of
+neural drift becomes a new symbolic check, shrinking the gap until parity
+is achieved.
 
-## The Two Layers
+The protocol applies to ALL research -- reports, analyses, memos, summaries,
+comparisons, or any document containing factual claims derived from web research.
 
-Source Zero is a neuro-symbolic verification system. Both layers must pass.
+## The Architecture
+
+Source Zero is a neuro-symbolic system with two layers. Both must pass.
 
 ### Symbolic Layer (scripts -- deterministic, free, reproducible)
 - Citation format: every claim cites `[S<N>]` where N is a sequential integer
@@ -172,6 +180,68 @@ This separation has three practical benefits:
    neural layer's behavior improves by giving it clearer protocol rules in
    the prompt, independent of the symbolic checker's evolution.
 
+## Neuro-Symbolic Parity
+
+Parity is the measurable goal. It means: on a fresh pipeline run, the symbolic
+layer's post-run validation finds zero errors, and a subsequent neural audit
+finds zero CRITICAL or MATERIAL issues.
+
+Parity is achieved not by making the neural layer smarter, but by making the
+symbolic layer so comprehensive that there is almost nothing left for the
+neural layer to get wrong unsupervised. Every time the neural layer fails in
+a pattern, that pattern becomes a script. The symbolic layer grows; the neural
+layer's unguarded territory shrinks.
+
+### Parity Measurement
+
+Ten checks, split across two layers:
+
+**Structural (5 checks):**
+1. Score consistency across documents
+2. Rubric key validity against formal specification
+3. Citation integrity (no orphans, no uncited sources)
+4. URL liveness (every source URL returns 200 or is documented)
+5. Document completeness (all sections present, minimum lengths met)
+
+**Semantic (5 checks):**
+6. Date traceability (every date in output traceable to source material)
+7. Number traceability (every dollar amount, percentage, count traceable)
+8. Name traceability (every person/company/org name traceable)
+9. Citation-domain alignment (source URL domain matches claim category)
+10. Claim density (>= 70% of factual sentences have inline citations)
+
+An entity achieves parity when all 10 checks pass. The parity score is
+tracked across runs and across the portfolio.
+
+### Production Results (as of 2026-04-11)
+
+First production deployment across a 23-company investment analysis portfolio:
+- **6 of 18 entities at parity** after validator tuning and targeted fixes
+- **Structural layer: 16/18 clean** (existing scripts work)
+- **Semantic layer: 6/18 clean** (new scripts catch what old layer missed)
+- **Key catches:** hallucinated competitor name, fabricated acquisition price,
+  citation misattributions, 261 grouped citations auto-fixed, wrong entity
+  name in investor reference
+- **Cost finding:** LLM auditors at $200+ missed every defect that scripts
+  caught for $0 in an 18-company portfolio audit
+
+### The Trajectory
+
+```
+Neural-only:     LLM produces and audits its own work. Variance is high.
+                 Defects survive to delivery.
+
+Source Zero v1:  Symbolic layer catches structural defects (citations,
+                 URLs, format). ~60% of issues caught deterministically.
+
+Source Zero v2:  Semantic scripts catch dates, numbers, names, domains.
+(current)        ~85% of issues caught. 6/18 at parity.
+
+Parity:          Symbolic layer finds nothing. Neural layer's unsupervised
+                 surface area is near zero. Every new drift pattern becomes
+                 a script.
+```
+
 ## Why This Exists
 
 LLMs hallucinate. Not often, not egregiously, but enough that any document
@@ -189,4 +259,4 @@ Source Zero eliminates both failure modes through the neuro-symbolic split:
 Neither layer alone is sufficient. Scripts can't comprehension-check whether
 a source actually supports a claim. LLMs skip mechanical verification and
 exhibit variance across runs. The combination -- symbolic guardrails on neural
-output -- is the architecture that works.
+output -- is the foundational architecture.

@@ -1,10 +1,8 @@
-# Source Zero Roadmap: Closing the Neuro-Symbolic Gap
+# Source Zero Roadmap: Achieving Neuro-Symbolic Parity
 
-## Current State
+## Status (2026-04-11)
 
-The symbolic layer is mature. The neural layer drifts. The system works because
-the symbolic layer catches what the neural layer gets wrong. But the goal is
-parity -- the symbolic layer finding nothing to correct.
+**6 of 18 entities at parity.** Phases 1, 3, and 4 complete. Phase 2 built.
 
 Four gaps identified from the Rippl Care run (2026-04-10) and the 18-company
 portfolio audit (2026-04-09):
@@ -173,19 +171,19 @@ compare.
 
 ---
 
-## Execution Order
+## Execution Status
 
 ```
-Phase 3 (semantic scripts)     -- start now, no dependencies, immediate value
-Phase 1 (executable templates) -- start now, parallel with Phase 3
-Phase 2 (orchestrator)         -- start after Phase 1 scaffolds exist
-Phase 4 (measurement)          -- start after Phases 1-3 have at least one
-                                  script each, to establish baseline
+Phase 1 (executable templates) -- COMPLETE (scaffold_mc0, scaffold_c2, scaffold_c5)
+Phase 2 (orchestrator)         -- COMPLETE (run_pipeline.py, 14 steps, validation loops)
+Phase 3 (semantic scripts)     -- COMPLETE (5 validators, 2 tuning rounds)
+Phase 4 (measurement)          -- COMPLETE (parity_score.py, 6/18 at parity)
 ```
 
-Phase 3 is the highest-ROI starting point because each script is standalone,
-testable against the existing portfolio, and immediately reduces MC22 token
-cost. Phase 1 is second because scaffolds reduce the fix loop in Phase 2.
+**Remaining work:**
+- 12 entities need MC1-MC22 re-runs for citation density (~$480)
+- Knowledge graph v2 (SQLite with temporal tracking) -- schema designed, not built
+- Pipeline orchestrator needs live testing (dry-run verified only)
 
 ---
 
