@@ -1,0 +1,3 @@
+.sourcezero/
+__pycache__/
+*.pyc
