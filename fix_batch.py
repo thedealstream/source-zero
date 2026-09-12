@@ -13,12 +13,17 @@ Usage:
   fix_batch.py register <project_root> --old "<text>" --new "<text>" [--file <basename>]
   fix_batch.py check <project_root>
   fix_batch.py close <project_root> [--force]
+  fix_batch.py check_retired <project_root>
 
 A registered edit is replace-ALL of --old with --new, across every
 project document (source documents included -- a fix that skips the
 ground file is re-inherited on the next generation). Scope with --file
 to one basename. Closing with unregistered changes present is refused;
 --force is a logged operator override.
+
+Closing a batch also retires its edits' --old text permanently (see
+retired_ledger.py): check_retired greps the current document set for
+any of that text and fails if a retired string survived the fix.
 """
 from __future__ import annotations
 
@@ -32,6 +37,7 @@ import shutil
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import retired_ledger
 from sz_config import Project
 
 
@@ -142,6 +148,7 @@ def close_batch(project, force=False):
     if not ok and force:
         print(f"[FORCED CLOSE] {len(problems)} unregistered change(s) "
               "accepted by operator override.")
+    retired_ledger.append_batch(project.root, manifest["registered"])
     os.remove(manifest_path(project))
     shutil.rmtree(snapshot_dir(project), ignore_errors=True)
     print(f"fix batch closed ({len(manifest['registered'])} registered edit(s))")
@@ -150,7 +157,7 @@ def close_batch(project, force=False):
 def main():
     ap = argparse.ArgumentParser(description="Registered-diff gate on fix batches")
     sub = ap.add_subparsers(dest="cmd", required=True)
-    for name in ("open", "check", "close"):
+    for name in ("open", "check", "close", "check_retired"):
         s = sub.add_parser(name)
         s.add_argument("project_root")
         if name == "close":
@@ -173,6 +180,14 @@ def main():
         else:
             for p in problems:
                 print(f"FAIL {p['kind']}: {p['file']}\n{p['detail']}\n")
+            sys.exit(1)
+    elif args.cmd == "check_retired":
+        hits = retired_ledger.survivors(args.project_root, project.all_documents())
+        if not hits:
+            print("PASS: no retired text survives in the document set")
+        else:
+            for path, s in hits:
+                print(f"FAIL retired text survives: {path}\n  {s!r}")
             sys.exit(1)
     else:
         close_batch(project, force=args.force)

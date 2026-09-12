@@ -33,6 +33,38 @@ UA = {
 }
 _TAG = re.compile(r"<script[\s\S]*?</script>|<style[\s\S]*?</style>|<[^>]+>")
 
+_BLOCKED_PHRASES = (
+    "checking your browser",
+    "verify you are human",
+    "access denied",
+    "captcha",
+    "enable javascript and cookies",
+)
+_STUB_CHARS = 1000
+_JS_SHELL_CLEANED_CHARS = 300
+_JS_SHELL_RAW_CHARS = 1500
+
+
+def classify_body(body, status):
+    """What a fetched page actually is, not just its HTTP status.
+
+    A 200 with a bot challenge, a stub, or a JS shell is not a page that
+    was read: none of the deliverable's cited text is on it. Returns
+    'blocked', 'pdf', 'stub', 'js-shell', or 'verified'."""
+    body = body or ""
+    low = body.lower()
+    if any(phrase in low for phrase in _BLOCKED_PHRASES):
+        return "blocked"
+    if body.startswith("%PDF"):
+        return "pdf"
+    cleaned = _clean(body)
+    if (len(cleaned) < _JS_SHELL_CLEANED_CHARS
+            and len(body) > _JS_SHELL_RAW_CHARS and "<script" in low):
+        return "js-shell"
+    if len(cleaned) < _STUB_CHARS:
+        return "stub"
+    return "verified" if status == 200 else "blocked"
+
 
 def _index_path(project):
     return os.path.join(project.cache_dir, "index.json")
@@ -56,7 +88,9 @@ def _clean(html):
     return re.sub(r"\s+", " ", text).strip()
 
 
-def store_text(project, url, text, status, category):
+def store_text(project, url, text, status, category=None):
+    if category is None:
+        category = classify_body(text, status)
     os.makedirs(project.cache_dir, exist_ok=True)
     cleaned = _clean(text)
     h = hashlib.sha256(url.encode("utf-8")).hexdigest()[:24]
@@ -99,8 +133,7 @@ def populate(project, urls, refresh=False):
         if not refresh and url in index:
             continue
         r = fetch_url(url)
-        store_text(project, url, r["body"],
-                   r["status"], "verified" if r["status"] == 200 else "blocked")
+        store_text(project, url, r["body"], r["status"])
         fetched += 1
     return fetched
 
