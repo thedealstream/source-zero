@@ -86,6 +86,14 @@ def main():
     c.add_argument("project_root")
     args = ap.parse_args()
     project = Project(args.project_root)
+    gap = project.pdf_coverage_gap()
+    if gap:
+        print(f"COVERAGE GAP: {len(gap)} PDF file(s) present but not "
+              "covered by any 'documents'/'source_documents' pattern "
+              "-- retired text was never checked in these files:")
+        for g in gap:
+            print(f"  {g}")
+        return 1
     unreadable = []
     hits = survivors(args.project_root, project.all_documents(), unreadable=unreadable)
     if unreadable:
