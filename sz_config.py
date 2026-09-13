@@ -89,6 +89,26 @@ class Project:
     def all_documents(self):
         return sorted(set(self.documents()) | set(self.source_documents()))
 
+    def pdf_coverage_gap(self):
+        """PDF files under the project root that no configured
+        'documents' or 'source_documents' pattern covers.
+
+        DEFAULTS["documents"] is ["*.md", "*.html"] -- a glob that can
+        never match a .pdf path, whatever TEXT_EXTS contains. A check
+        that only sweeps all_documents() would silently never see a
+        rendered PDF deliverable a client actually opens. Named here so
+        callers can fail loud instead of reporting a quiet pass.
+        """
+        covered = set(self.all_documents())
+        found = []
+        for dirpath, _dirnames, filenames in os.walk(self.root):
+            if self.state_dir in dirpath:
+                continue
+            for name in filenames:
+                if name.lower().endswith(".pdf"):
+                    found.append(os.path.join(dirpath, name))
+        return sorted(f for f in found if f not in covered)
+
     def state_path(self, name):
         os.makedirs(self.state_dir, exist_ok=True)
         return os.path.join(self.state_dir, name)

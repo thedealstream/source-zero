@@ -24,6 +24,10 @@ to one basename. Closing with unregistered changes present is refused;
 Closing a batch also retires its edits' --old text permanently (see
 retired_ledger.py): check_retired greps the current document set for
 any of that text and fails if a retired string survived the fix.
+check_retired also fails loud with a COVERAGE GAP when a PDF sits in
+the project but no 'documents'/'source_documents' pattern covers it --
+a project on default config never globs *.pdf, so an uncovered PDF
+would otherwise pass unchecked.
 """
 from __future__ import annotations
 
@@ -182,6 +186,14 @@ def main():
                 print(f"FAIL {p['kind']}: {p['file']}\n{p['detail']}\n")
             sys.exit(1)
     elif args.cmd == "check_retired":
+        gap = project.pdf_coverage_gap()
+        if gap:
+            print(f"COVERAGE GAP: {len(gap)} PDF file(s) present but not "
+                  "covered by any 'documents'/'source_documents' pattern "
+                  "-- retired text was never checked in these files:")
+            for g in gap:
+                print(f"  {g}")
+            sys.exit(1)
         hits = retired_ledger.survivors(args.project_root, project.all_documents())
         if not hits:
             print("PASS: no retired text survives in the document set")
