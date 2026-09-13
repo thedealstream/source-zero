@@ -27,7 +27,11 @@ any of that text and fails if a retired string survived the fix.
 check_retired also fails loud with a COVERAGE GAP when a PDF sits in
 the project but no 'documents'/'source_documents' pattern covers it --
 a project on default config never globs *.pdf, so an uncovered PDF
-would otherwise pass unchecked.
+would otherwise pass unchecked. A second COVERAGE GAP applies to a
+covered PDF that read_document could not extract at all (no pypdf or
+pdftotext available, or a corrupted/password-protected file): that
+file's retired text was never actually checked, so it fails loud
+instead of counting as clean.
 """
 from __future__ import annotations
 
@@ -194,7 +198,15 @@ def main():
             for g in gap:
                 print(f"  {g}")
             sys.exit(1)
-        hits = retired_ledger.survivors(args.project_root, project.all_documents())
+        unreadable = []
+        hits = retired_ledger.survivors(args.project_root, project.all_documents(),
+                                         unreadable=unreadable)
+        if unreadable:
+            print(f"COVERAGE GAP: {len(unreadable)} file(s) not checked "
+                  "(no extractor) -- retired text was never checked in these files:")
+            for p in unreadable:
+                print(f"  {p}")
+            sys.exit(1)
         if not hits:
             print("PASS: no retired text survives in the document set")
         else:

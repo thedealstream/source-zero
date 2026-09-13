@@ -1,6 +1,9 @@
 import os
+import sys
+
 import pytest
 import fix_batch as fb
+import retired_ledger
 from conftest import rewrite
 
 
@@ -41,3 +44,20 @@ def test_close_refuses_to_launder(project):
         fb.close_batch(project)
     fb.close_batch(project, force=True)
     assert fb.load_manifest(project) is None
+
+
+def test_check_retired_fails_loud_on_unreadable_file(project, monkeypatch):
+    # A file read_document can't extract (no pypdf/pdftotext, or a
+    # corrupted/password-protected PDF) must not report a clean PASS --
+    # its retired text was never actually checked.
+    retired_ledger.append_batch(project.root,
+                                 [{"old": "$13.1M total", "new": "$5M", "finding": "f1"}])
+
+    def fake_read_document(path):
+        raise RuntimeError("no PDF text extractor")
+
+    monkeypatch.setattr(retired_ledger, "read_document", fake_read_document)
+    monkeypatch.setattr(sys, "argv", ["fix_batch.py", "check_retired", project.root])
+    with pytest.raises(SystemExit) as exc:
+        fb.main()
+    assert exc.value.code == 1

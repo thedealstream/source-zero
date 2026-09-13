@@ -53,7 +53,15 @@ def retired_strings(project_root):
     return strings
 
 
-def survivors(project_root, files):
+def survivors(project_root, files, unreadable=None):
+    """Retired strings still present in `files`.
+
+    A file that raises RuntimeError (e.g. a PDF with no available text
+    extractor) was never actually checked -- that is a coverage gap, not
+    a clean file. When `unreadable` is given (a list), its path is
+    appended there so a caller can tell "nothing survived" apart from
+    "some files were never read" and fail loud on the latter, same as
+    validate_correction_ledger.py's no_extractor handling."""
     strings = retired_strings(project_root)
     if not strings:
         return []
@@ -62,6 +70,8 @@ def survivors(project_root, files):
         try:
             text = read_document(path)
         except RuntimeError:
+            if unreadable is not None:
+                unreadable.append(path)
             continue
         for s in strings:
             if s in text:
@@ -76,7 +86,15 @@ def main():
     c.add_argument("project_root")
     args = ap.parse_args()
     project = Project(args.project_root)
-    hits = survivors(args.project_root, project.all_documents())
+    unreadable = []
+    hits = survivors(args.project_root, project.all_documents(), unreadable=unreadable)
+    if unreadable:
+        print(f"COVERAGE GAP: {len(unreadable)} file(s) not checked "
+              "(no extractor) -- retired text was never checked in these files:")
+        for p in unreadable:
+            print(f"  {p}")
+        print(f"FAIL: {len(unreadable)} file(s) could not be checked for retired text")
+        return 1
     if not hits:
         print("PASS: no retired text survives in the document set")
         return 0
