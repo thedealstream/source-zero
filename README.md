@@ -19,6 +19,9 @@ proves the somewhere supports the claim. These tools enforce the second.
   the cited page and share a topic word with the claim. "The page is
   silent on this" becomes a string miss, checkable forever at zero
   marginal cost.
+- `validate_citation_tag_separation.py` — citation tags that touch
+  each other read as one code ("S28S26S29S33"). The check refuses
+  them; `--fix` adds commas and sorts each group.
 - `adjudicated.py` — verdict memory. A candidate matching a prior
   SUPPORTED ruling is dropped before any verification spend; one
   matching a prior CONFIRMED fix escalates as a possible regression.
