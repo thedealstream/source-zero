@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""gate.py -- run every Source Zero deterministic check on a project.
+"""gate.py -- run every TrueRead deterministic check on a project.
 
     gate.py <project_root> [--advisory-only]
 

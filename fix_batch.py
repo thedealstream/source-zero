@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""fix_batch.py -- Source Zero registered-diff gate on fix batches.
+"""fix_batch.py -- TrueRead registered-diff gate on fix batches.
 
 Correction passes inject defects: measured at 17.5-42% per batch on
 production document sets before this gate existed. Every injection

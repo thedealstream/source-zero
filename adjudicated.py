@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""adjudicated.py -- Source Zero memory of verified candidate verdicts.
+"""adjudicated.py -- TrueRead memory of verified candidate verdicts.
 
 Reviewer candidates that a blind verifier ruled SUPPORTED get
 re-reported by the next round's fresh reviewers; the same two

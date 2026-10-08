@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""page_cache.py -- Source Zero local text cache of cited pages.
+"""page_cache.py -- TrueRead local text cache of cited pages.
 
 The quote-anchor gate needs the cited page's text on disk, as verified.
 Entries have no TTL: a quote is anchored against the page AS READ. Use

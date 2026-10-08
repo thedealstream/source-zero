@@ -1,4 +1,4 @@
-# Source Zero — the measured case
+# TrueRead — the measured case
 
 Every number below is from production adversarial reviews of real
 investment-diligence document packages, 2026. Package identities are

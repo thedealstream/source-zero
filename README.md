@@ -1,4 +1,4 @@
-# Source Zero
+# TrueRead
 
 Deterministic verification gates for cited documents. The doctrine in
 one line: provenance proves a claim came from somewhere; correspondence

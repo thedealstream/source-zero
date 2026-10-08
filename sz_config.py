@@ -1,6 +1,6 @@
-"""sz_config.py -- Source Zero project layout.
+"""sz_config.py -- TrueRead project layout.
 
-A Source Zero PROJECT is a directory of documents under verification.
+A TrueRead PROJECT is a directory of documents under verification.
 Layout lives in sourcezero.json at the project root:
 
     {

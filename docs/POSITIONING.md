@@ -1,8 +1,8 @@
-# Source Zero — positioning
+# TrueRead — positioning
 
 ## One sentence
 
-Provenance proves a claim came from somewhere; Source Zero proves the
+Provenance proves a claim came from somewhere; TrueRead proves the
 somewhere supports the claim, measures the failure rate, and publishes
 the counts.
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""retired_ledger.py -- Source Zero permanent record of retired text.
+"""retired_ledger.py -- TrueRead permanent record of retired text.
 
 A correction retires a wrong figure or phrase. If the retired text is
 still anywhere in the document set after the batch that retired it

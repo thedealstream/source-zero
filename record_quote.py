@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """record_quote.py -- append one quote-anchor record to the project ledger.
 
-Source Zero verifies a claim against the verbatim text of its cited
+TrueRead verifies a claim against the verbatim text of its cited
 page. This is the only writer for that ledger: it appends, so an
 earlier read of a page is never silently replaced by a later one.
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""extract_claims.py -- Source Zero claims ledger + cross-document drift.
+"""extract_claims.py -- TrueRead claims ledger + cross-document drift.
 
 A fact lives in many hand-written files. The largest confirmed defect
 class in production adversarial reviews was INCONSISTENCY, and its
